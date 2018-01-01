@@ -58,6 +58,9 @@ class AVLTree
         void insert(int key,vector<int> _mods);
         Node * balanceo(Node *node,int key);
         void graphviz(Node *node, ofstream & file);
+        void graphvizTreeCommon(Node *node, ofstream & file);
+        void graphvizTreeInserts(Node *node, ofstream & file);
+
         void graphvizRow(ofstream &file);
         void preOrder(Node *node);
         void imprimir(ofstream & file);
@@ -65,6 +68,7 @@ class AVLTree
         Node *find(int time);
         Node * minValueNode(Node* node);
         Node *deleteNode(struct Node* root, int key);
+        void deleteNode(int key);
 
 };
 
@@ -232,7 +236,10 @@ Node* AVLTree::deleteNode(Node* node, int key)
     return node;
 }
 
-
+void AVLTree::deleteNode(int key)
+{
+    root=deleteNode(root,key);
+}
 
 //------------------------------------------------------------------------------------------------
 
@@ -253,6 +260,37 @@ void AVLTree::graphviz(Node *node, ofstream & file)
 }
 
 
+void AVLTree::graphvizTreeCommon(Node *node, ofstream & file)
+{
+    if(node != nullptr)
+    {
+        file<<"\""<<node<<"\""<<" [ label= \""<<node->key<<"\"];"<<endl;
+        if(node->left)
+            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->left<<"\""<<endl;
+        if(node->right)
+            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->right<<"\""<<endl;
+        graphvizTreeCommon(node->left,file);
+        graphvizTreeCommon(node->right,file);
+    }
+}
+
+void AVLTree::graphvizTreeInserts(Node *node, ofstream & file)
+{
+    if(node != nullptr)
+    {
+        file<<"\""<<node<<"\""<<" [ shape=record, label=\" "<<node->key<<" | { "<< node->mods[0] <<"| " <<node->mods[1]<<"} "<<"\"];"<<endl;
+        if(node->left)
+            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->left<<"\""<<endl;
+        if(node->right)
+            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->right<<"\""<<endl;
+        graphvizTreeInserts(node->left,file);
+        graphvizTreeInserts(node->right,file);
+    }
+}
+
+
+
+
 void AVLTree::graphvizRow(ofstream & file)
 {
     Node* it=root;
@@ -266,7 +304,7 @@ void AVLTree::graphvizRow(ofstream & file)
         file<<" ->  \""<<it<<"\"";
     }
     file<< "[color=\"red\"] ;"<<endl;
-
+/*
 
     it=root;
     while(it->right)
@@ -279,7 +317,7 @@ void AVLTree::graphvizRow(ofstream & file)
         file<<" ->  \""<<it<<"\"";
     }
     file<< "[color=\"red\"] ;"<<endl;
-
+*/
 }
 
 void AVLTree::preOrder(Node *node)
@@ -294,7 +332,7 @@ void AVLTree::preOrder(Node *node)
 
 Node *AVLTree::find(int key, Node *node)
 {
-    if(key <= node->key)
+    if(key < node->key)
     {
         if(node->left)
             return find(key,node->left);
@@ -304,10 +342,15 @@ Node *AVLTree::find(int key, Node *node)
     }
     else
     {
-        if(node->right)
-            return find(key,node->right);
-        else
+        if(key == node->key)
             return node;
+        else
+        {
+            if(node->right)
+                return find(key,node->right);
+            else
+                return node;
+        }
     }
 }
 
