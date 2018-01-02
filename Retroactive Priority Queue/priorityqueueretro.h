@@ -23,7 +23,6 @@ class PrioQueueRetro
         PrioQueueRetro();
         void insertNow(int value) ; //insert in Now
         void insertInTime(int time,int value);
-        int popMinNow();
         void deleteMinInTime(int time);
         int get_time();
 
@@ -58,11 +57,6 @@ void PrioQueueRetro::insertNow(int value)
     priorityTreeM[value]=value;
 }
 
-int PrioQueueRetro::popMinNow()
-{
-
-}
-
 void PrioQueueRetro::deleteMinInTime(int time)
 {
 
@@ -77,21 +71,18 @@ void PrioQueueRetro::deleteMinInTime(int time)
     //Rompiendo puente siguiente si existe
     Node * ChangeBridge = updateTree->find(time);
     while(ChangeBridge != nullptr && ChangeBridge->mods[1]!=0 )
-    {
         ChangeBridge=ChangeBridge->next;
-    }
+
     if(ChangeBridge)
-    {
-        cout<<"Bridge : "<<ChangeBridge->key<<endl;
         ChangeBridge->mods[1]=1;
-    }
+
 
     Node * itChange=updateTree->find(time)->prev;//!!!!!!!!!!!!!!!!
     Node * minAlive=nullptr;
 
     while(itChange)
     {
-        cout<<"entro al while"<<endl;
+
         if(itChange->mods[1]==0)
         {
             if(minAlive == nullptr || itChange->mods[0] < minAlive->mods[0] )
@@ -128,8 +119,7 @@ void PrioQueueRetro::deleteMinInTime(int time)
     while( bridge->mods[2] != 0 and bridge!=nullptr)
         bridge=bridge->next;
 
-    cout<<" Puente !! "<<bridge->key;
-//-----------------------------------------------------------------------------------------
+//---INSERT TREE--------------------------------------------------------------------------------------
     //El tiempo del puente más cercano se busca en el arbol de Insersiones
     Node * itInsert = insertsTree->find(bridge->key);//!!!!!!!!!!!!!!!!
     //Se busca en el InsertTree al menor presente en el  actual
@@ -159,7 +149,6 @@ void PrioQueueRetro::deleteMinInTime(int time)
     }
 }
 
-
 void PrioQueueRetro::insertInTime(int time, int value)
 {
     vector<int> mods(3);
@@ -185,11 +174,8 @@ void PrioQueueRetro::insertInTime(int time, int value)
 
     if(itMaxDel)
     {
-
-        cout<<itMaxDel->key<<"  --  "<<endl;
         updateTree->find(time)->mods[1]=1;
         itMaxDel->mods[1]=0;
-
         // Actualiza las sumas
         Node* itSuma = itMaxDel;
 
@@ -199,30 +185,23 @@ void PrioQueueRetro::insertInTime(int time, int value)
             {
                 int sumaMods= itSuma->next->mods[1]+itSuma->next->mods[2];
                 itSuma->mods[2]=sumaMods;
-                cout<<itSuma->key<<" :"<<itSuma->mods[2]<<" -s-  ";
-            }
+                            }
             itSuma=itSuma->prev;
         }
-        cout<<"termino sumas"<<endl;
     }
 
     Node* bridge=updateTree->find(time)->prev; //!!!!!!!!!!!!!!!!
-    cout<<"Puente ? "<<bridge->mods[2]<<" - "<<bridge<<endl;
 
     while( bridge != nullptr && bridge->mods[2] != 0  )
-    {
-            cout<<" .. [ "<<bridge->key<<" - "<<bridge->mods[2]<<" ] ";
             bridge=bridge->prev;
-    }
 
-    cout<<"paso while"<<endl;
+// ---INSERT TREE--------------------------------------------------------------------------------------
 
     // Se inserta un nuevo nodo en el arbol de inserts
     vector<int> modInsert(3);
     modInsert[0]=value; // valor
     modInsert[1]=0;//kind  MARCADOR 0 POR QUE NO ESTA PRESENTE EN EL ACTUAL
     insertsTree->insert(time,modInsert);
-    cout<<bridge->key<<" inserto en inserts"<<endl;
     //El tiempo del puente más cercano se busca en el arbol de Insersiones    
     Node * itInsert = insertsTree->find(bridge->key);//!!!!!!!!!!!!!!!!
     //Se busca al mayor eliminado
@@ -240,7 +219,6 @@ void PrioQueueRetro::insertInTime(int time, int value)
     //Si existe el mayor eliminado
     if(maxDel)
     {
-
         // El mayor eliminado vuelve a la priorityTree
         maxDel->mods[1]=1;
         priorityTreeM[maxDel->mods[0]]=maxDel->mods[0];
