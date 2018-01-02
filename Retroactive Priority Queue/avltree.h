@@ -4,7 +4,7 @@
 #include <iostream>
 #include<fstream>
 #include <vector>
-
+#include <map>
 
 using namespace std;
 
@@ -58,7 +58,6 @@ class AVLTree
         void insert(int key,vector<int> _mods);
         Node * balanceo(Node *node,int key);
         void graphviz(Node *node, ofstream & file);
-        void graphvizTreeCommon(Node *node, ofstream & file);
         void graphvizTreeInserts(Node *node, ofstream & file);
 
         void graphvizRow(ofstream &file);
@@ -260,19 +259,6 @@ void AVLTree::graphviz(Node *node, ofstream & file)
 }
 
 
-void AVLTree::graphvizTreeCommon(Node *node, ofstream & file)
-{
-    if(node != nullptr)
-    {
-        file<<"\""<<node<<"\""<<" [ label= \""<<node->key<<"\"];"<<endl;
-        if(node->left)
-            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->left<<"\""<<endl;
-        if(node->right)
-            file<<"\""<<node<<"\""<<" -> "<<"\""<<node->right<<"\""<<endl;
-        graphvizTreeCommon(node->left,file);
-        graphvizTreeCommon(node->right,file);
-    }
-}
 
 void AVLTree::graphvizTreeInserts(Node *node, ofstream & file)
 {
@@ -362,6 +348,14 @@ Node *AVLTree::find(int key)
 
 
 
+void graphvizTreeCommon(map<int,int> mymap, ofstream & file)
+{
+    for (std::map<int,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+    {
+        file<< it->first << " -> ";
+    }
+    file<<"x"<<endl;
+}
 
 
 #endif // AVLTREE_H
